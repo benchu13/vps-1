@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  funding-rate-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: funding-rate-monitor
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - funding-monitor-network
+
+networks:
+  funding-monitor-network:
+    driver: bridge
